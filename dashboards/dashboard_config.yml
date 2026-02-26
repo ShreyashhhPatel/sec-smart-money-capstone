@@ -1,0 +1,160 @@
+# SEC Smart Money - Dashboard Configuration
+# Databricks SQL Dashboard Configuration File
+# Version: 1.0
+
+dashboard:
+  name: "SEC Smart Money Intelligence"
+  description: "Insider Trading Signal Detection Dashboard"
+  owner: "Data Engineering Team"
+  environment: "production"
+  workspace: "fintech_analytics"
+
+# Catalog and Schema Configuration
+catalog:
+  name: "fintech_analytics"
+  silver_schema: "silver"
+  gold_schema: "gold"
+  audit_schema: "audit"
+
+# Dashboard Refresh Configuration
+refresh:
+  frequency: "DAILY"
+  time: "06:00 AM UTC"
+  retention_days: 90
+  incremental_mode: true
+
+# KPI Tiles Configuration
+kpi_tiles:
+  - id: "total_institutions"
+    name: "Total Institutions"
+    query: "kpi_total_institutions"
+    type: "number"
+    format: "###,##0"
+    position: "top_left"
+    color: "blue"
+
+  - id: "total_aum"
+    name: "Total AUM"
+    query: "kpi_total_aum"
+    type: "number"
+    format: "$#,##0.00B"
+    position: "top_center"
+    color: "green"
+
+  - id: "avg_conviction"
+    name: "Avg Conviction Score"
+    query: "kpi_avg_conviction"
+    type: "number"
+    format: "#0.0"
+    position: "top_right"
+    color: "orange"
+
+  - id: "total_transactions"
+    name: "Total Transactions"
+    query: "kpi_total_transactions"
+    type: "number"
+    format: "###,##0"
+    position: "middle_left"
+    color: "purple"
+
+  - id: "bullish_signals"
+    name: "Bullish Signals"
+    query: "kpi_bullish_signals"
+    type: "number"
+    format: "###,##0"
+    position: "middle_center"
+    color: "green"
+
+  - id: "neutral_signals"
+    name: "Neutral Signals (%)"
+    query: "kpi_neutral_signals"
+    type: "percentage"
+    format: "#0.00%"
+    position: "middle_right"
+    color: "gray"
+
+# Charts Configuration
+charts:
+  - id: "top_institutions"
+    name: "Top Institutions by AUM"
+    query: "chart_top_institutions"
+    type: "bar_chart"
+    x_axis: "Institution"
+    y_axis: "Portfolio_Value_M"
+    position: "bottom_left"
+    height: "medium"
+
+  - id: "insider_activity"
+    name: "Insider Buy/Sell Activity"
+    query: "chart_insider_activity"
+    type: "bar_chart"
+    x_axis: "Company"
+    y_axis: ["Buys", "Sells"]
+    position: "bottom_center"
+    height: "medium"
+    stacked: false
+
+  - id: "transaction_timeline"
+    name: "Transaction Timeline"
+    query: "chart_transaction_timeline"
+    type: "line_chart"
+    x_axis: "filing_date"
+    y_axis: ["Buys", "Sells"]
+    position: "bottom_right"
+    height: "medium"
+
+  - id: "security_distribution"
+    name: "Security Type Distribution"
+    query: "chart_security_distribution"
+    type: "pie_chart"
+    position: "expanded"
+    height: "large"
+
+# Table Configuration
+tables:
+  - id: "top_positions"
+    name: "Top Holdings"
+    query: "table_top_positions"
+    position: "expanded"
+    columns: ["Stock", "Position_M", "Conviction", "Institution"]
+    page_size: 20
+    sortable: true
+    filterable: true
+
+# Filters Configuration
+filters:
+  - id: "date_range"
+    name: "Filing Date Range"
+    type: "date_range"
+    default_start: "-365 days"
+    default_end: "today"
+    applies_to: ["transaction_timeline", "insider_activity"]
+
+  - id: "conviction_threshold"
+    name: "Minimum Conviction Score"
+    type: "slider"
+    min: 0
+    max: 100
+    default: 50
+    step: 5
+    applies_to: ["top_positions", "top_institutions"]
+
+  - id: "security_type"
+    name: "Security Type"
+    type: "multi_select"
+    options_query: "filter_security_types"
+    applies_to: ["security_distribution"]
+
+# Performance Settings
+performance:
+  query_timeout: 300
+  cache_enabled: true
+  cache_ttl_minutes: 60
+  max_rows: 100000
+
+# Notifications
+notifications:
+  enabled: true
+  email_on_failure: true
+  slack_notifications: true
+  channels: ["#data-alerts"]

@@ -1,0 +1,233 @@
+# SEC Smart Money - Schema Definitions
+# Catalog: fintech_analytics
+
+catalog_name: "fintech_analytics"
+
+# ============================================================================
+# BRONZE SCHEMA - Raw Data Layer
+# ============================================================================
+bronze_schema:
+  name: "bronze"
+  comment: "Raw data preservation layer - no transformations"
+  owner: "data_engineers"
+
+  tables:
+    bronze_fact_insider_transactions:
+      type: "MANAGED"
+      format: "DELTA"
+      comment: "Raw insider transaction data from SEC"
+      columns:
+        - name: "cik"
+          type: "STRING"
+          comment: "Central Index Key (SEC ID)"
+
+        - name: "company_name"
+          type: "STRING"
+          comment: "Company name"
+
+        - name: "filing_date"
+          type: "STRING"
+          comment: "SEC filing date (YYYY-MM-DD)"
+
+        - name: "insider_name"
+          type: "STRING"
+          comment: "Name of insider"
+
+        - name: "security_title"
+          type: "STRING"
+          comment: "Type of security traded"
+
+        - name: "transaction_date"
+          type: "STRING"
+          comment: "Date of transaction"
+
+        - name: "shares"
+          type: "DOUBLE"
+          comment: "Number of shares traded"
+
+        - name: "price_per_share"
+          type: "DOUBLE"
+          comment: "Price per share in USD"
+
+        - name: "transaction_code"
+          type: "STRING"
+          comment: "SEC transaction code"
+
+        - name: "acquired_disposed"
+          type: "STRING"
+          comment: "'A' for acquired, 'D' for disposed"
+
+        - name: "shares_after_transaction"
+          type: "DOUBLE"
+          comment: "Shares owned after transaction"
+
+        - name: "confidence_score"
+          type: "INT"
+          comment: "Confidence score 0-100"
+
+        - name: "ingest_time"
+          type: "TIMESTAMP"
+          comment: "Time data was ingested"
+
+    bronze_fact_institutional_holdings:
+      type: "MANAGED"
+      format: "DELTA"
+      comment: "Raw institutional holdings data"
+      columns:
+        - name: "cik"
+          type: "STRING"
+          comment: "Institution CIK"
+
+        - name: "company_name"
+          type: "STRING"
+          comment: "Institution name"
+
+        - name: "issuer_name"
+          type: "STRING"
+          comment: "Security issuer name"
+
+        - name: "market_value"
+          type: "DOUBLE"
+          comment: "Market value in USD"
+
+        - name: "conviction_score"
+          type: "INT"
+          comment: "Conviction score 0-100"
+
+        - name: "filing_date"
+          type: "STRING"
+          comment: "Filing date"
+
+        - name: "ingest_time"
+          type: "TIMESTAMP"
+          comment: "Ingestion timestamp"
+
+# ============================================================================
+# SILVER SCHEMA - Clean & Normalized Data Layer
+# ============================================================================
+silver_schema:
+  name: "silver"
+  comment: "Cleaned, normalized, and deduplicated data"
+  owner: "data_engineers"
+
+  fact_tables:
+    silver_fact_insider_transactions:
+      type: "MANAGED"
+      format: "DELTA"
+      location: "fintech_analytics.silver.silver_fact_insider_transactions"
+
+    silver_fact_institutional_holdings:
+      type: "MANAGED"
+      format: "DELTA"
+      location: "fintech_analytics.silver.silver_fact_institutional_holdings"
+
+  dimension_tables:
+    silver_dim_companies:
+      type: "MANAGED"
+      format: "DELTA"
+      columns:
+        - name: "cik"
+          type: "STRING"
+          is_primary_key: true
+        - name: "company_name"
+          type: "STRING"
+
+    silver_dim_insiders:
+      type: "MANAGED"
+      format: "DELTA"
+      columns:
+        - name: "insider_id"
+          type: "STRING"
+          is_primary_key: true
+        - name: "insider_name"
+          type: "STRING"
+
+    silver_dim_institutions:
+      type: "MANAGED"
+      format: "DELTA"
+      columns:
+        - name: "institution_id"
+          type: "STRING"
+          is_primary_key: true
+        - name: "company_name"
+          type: "STRING"
+
+# ============================================================================
+# GOLD SCHEMA - Analytics & Business Views Layer
+# ============================================================================
+gold_schema:
+  name: "gold"
+  comment: "Analytical views for business intelligence"
+  owner: "data_engineers"
+
+  views:
+    gold_insider_summary_by_company:
+      type: "VIEW"
+      comment: "Insider activity aggregated by company"
+
+    gold_high_activity_insiders:
+      type: "VIEW"
+      comment: "Insiders with 5+ transactions"
+
+    gold_combined_smart_money:
+      type: "VIEW"
+      comment: "All signals with strength classification"
+
+    gold_insider_sentiment:
+      type: "VIEW"
+      comment: "Buy/sell sentiment analysis"
+
+    gold_institutional_conviction:
+      type: "VIEW"
+      comment: "Conviction score analysis by institution"
+
+    gold_kpi_summary:
+      type: "VIEW"
+      comment: "Key performance indicators"
+
+    gold_smart_money_signals:
+      type: "VIEW"
+      comment: "Buy/sell signals with strength"
+
+    gold_top_holdings_by_institution:
+      type: "VIEW"
+      comment: "Top holdings ranked by size"
+
+# ============================================================================
+# AUDIT SCHEMA - Logging & Quality
+# ============================================================================
+audit_schema:
+  name: "audit"
+  comment: "Audit logging and data quality tracking"
+  owner: "data_engineers"
+
+  tables:
+    pipeline_runs:
+      type: "MANAGED"
+      format: "DELTA"
+      comment: "Pipeline execution tracking"
+
+    task_runs:
+      type: "MANAGED"
+      format: "DELTA"
+      comment: "Individual task execution tracking"
+
+    data_quality_checks:
+      type: "MANAGED"
+      format: "DELTA"
+      comment: "Quality check results"
+
+    error_log:
+      type: "MANAGED"
+      format: "DELTA"
+      comment: "Error tracking and logging"
+
+    watermarks:
+      type: "MANAGED"
+      format: "DELTA"
+      comment: "Incremental load state tracking"
+
+    repair_history:
+      type: "MANAGED"
+      format: "DELTA"
+      comment: "Data repair operation history"

@@ -1,0 +1,121 @@
+# SEC Smart Money - Environment Configuration
+# File: config/environment.yml
+# Databricks Workspace Configuration
+
+environment: production
+
+# Databricks Workspace Configuration
+workspace:
+  url: "https://adb-XXXXXXXXXXXX.azuredatabricks.net"
+  token: "${DATABRICKS_TOKEN}"
+  host: "adb-XXXXXXXXXXXX.azuredatabricks.net"
+  api_version: "2.1"
+  region: "us-east-1"
+
+# Catalog Configuration
+catalog:
+  name: "fintech_analytics"
+  owner: "data_engineers"
+  comment: "SEC Smart Money Data Platform"
+
+# Schemas
+schemas:
+  bronze:
+    name: "bronze"
+    comment: "Raw data preservation layer"
+    owner: "data_engineers"
+    tables:
+      - bronze_fact_insider_transactions
+      - bronze_fact_institutional_holdings
+
+  silver:
+    name: "silver"
+    comment: "Cleaned and normalized data"
+    owner: "data_engineers"
+    tables:
+      - silver_fact_insider_transactions
+      - silver_fact_institutional_holdings
+      - silver_dim_companies
+      - silver_dim_insiders
+      - silver_dim_institutions
+
+  gold:
+    name: "gold"
+    comment: "Analytical views for business intelligence"
+    owner: "data_engineers"
+    views:
+      - gold_insider_summary_by_company
+      - gold_high_activity_insiders
+      - gold_combined_smart_money
+      - gold_insider_sentiment
+      - gold_institutional_conviction
+      - gold_kpi_summary
+      - gold_smart_money_signals
+      - gold_top_holdings_by_institution
+
+  audit:
+    name: "audit"
+    comment: "Audit logging and data quality tracking"
+    owner: "data_engineers"
+    tables:
+      - pipeline_runs
+      - task_runs
+      - data_quality_checks
+      - error_log
+      - watermarks
+      - repair_history
+
+# Cluster Configuration
+cluster:
+  type: "all-purpose"
+  spark_version: "13.3.x-scala2.12"
+  node_type_id: "i3.xlarge"
+  min_workers: 2
+  max_workers: 8
+  autotermination_minutes: 30
+  auto_scaling: true
+
+# SQL Warehouse Configuration (for dashboards)
+sql_warehouse:
+  name: "dashboard_warehouse"
+  cluster_size: "MEDIUM"
+  max_num_clusters: 1
+  auto_stop_mins: 30
+  creator: "data_engineers"
+
+# Parameters
+parameters:
+  lookback_days: 365
+  min_conviction_score: 50
+  incremental_mode: true
+  batch_size: 10000
+
+# Notifications
+notifications:
+  slack_webhook: "${SLACK_WEBHOOK_URL}"
+  email_recipients:
+    - data-team@company.com
+    - analytics@company.com
+  enabled: true
+
+# Logging
+logging:
+  level: "INFO"
+  format: "json"
+  retention_days: 90
+  archive_location: "s3://bucket/logs/"
+
+# Security
+security:
+  enable_unity_catalog: true
+  data_governance_enabled: true
+  audit_logging: true
+  credential_management: "DATABRICKS_WORKSPACE"
+
+# Storage
+storage:
+  type: "DELTA"
+  location: "s3://bucket/fintech_analytics/"
+  compression: "SNAPPY"
+  enable_caching: true
+

@@ -1,0 +1,207 @@
+# SEC Smart Money Capstone Project - .gitignore
+# File: .gitignore
+
+# ============================================================================
+# DATABRICKS
+# ============================================================================
+.databricks/
+*.dbc
+*.wheel
+*.egg
+.databricks-cli
+.db_repo
+.workspace
+workspace_artifacts/
+
+# ============================================================================
+# PYTHON
+# ============================================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ============================================================================
+# IDE & EDITORS
+# ============================================================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+*.sublime-workspace
+*.sublime-project
+.project
+.pydevproject
+.settings/
+*.code-workspace
+
+# ============================================================================
+# SECRETS & CREDENTIALS
+# ============================================================================
+.env
+.env.local
+.env.*.local
+secrets.json
+config.local.yml
+config.local.yaml
+*.key
+*.pem
+credentials
+token.txt
+api_key.txt
+databricks_token.txt
+access_token
+refresh_token
+.aws/
+.ssh/
+
+# ============================================================================
+# LOGS & TEMP FILES
+# ============================================================================
+*.log
+logs/
+*.tmp
+*.tmp.*
+temp/
+tmp/
+*.cache
+.cache/
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# ============================================================================
+# OS & SYSTEM FILES
+# ============================================================================
+.DS_Store
+Thumbs.db
+desktop.ini
+.nfs*
+.AppleDouble
+.LSOverride
+._*
+ehthumbs.db
+$RECYCLE.BIN/
+
+# ============================================================================
+# TESTING
+# ============================================================================
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.hypothesis/
+*.cover
+.pytest_cache
+coverage.xml
+
+# ============================================================================
+# BUILD ARTIFACTS
+# ============================================================================
+dist/
+build/
+*.tar.gz
+*.zip
+*.egg-info/
+*.whl
+
+# ============================================================================
+# JUPYTER NOTEBOOKS (temp)
+# ============================================================================
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/
+**/.ipynb_checkpoints/*
+
+# ============================================================================
+# DEVELOPMENT
+# ============================================================================
+TODO.md
+NOTES.md
+scratch/
+test_*.ipynb
+local_*.py
+debug_*.py
+experimental/
+
+# ============================================================================
+# LARGE FILES
+# ============================================================================
+*.parquet
+*.csv
+*.csv.gz
+*.tsv
+data/
+datasets/
+*.db
+*.sqlite
+
+# ============================================================================
+# IDE-SPECIFIC
+# ============================================================================
+# VS Code
+.vscode/
+settings.json
+launch.json
+
+# PyCharm
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Sublime Text
+*.sublime-workspace
+*.sublime-project
+
+# Atom
+.atom/
+
+# ============================================================================
+# DOCUMENTATION BUILD
+# ============================================================================
+docs/_build/
+site/
+
+# ============================================================================
+# COMPILED FILES
+# ============================================================================
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+
+# ============================================================================
+# DO NOT IGNORE (whitelist)
+# ============================================================================
+# !.gitkeep
+# !requirements.txt
+# !README.md
+# !LICENSE
+# !ARCHITECTURE.md
+

@@ -1,0 +1,156 @@
+# SEC Smart Money - Pipeline Parameters
+# File: config/parameters.yml
+# Controls execution behavior across all notebooks
+
+# Development Environment
+dev:
+  catalog_name: "fintech_analytics_dev"
+  environment: "dev"
+  lookback_days: 30
+  min_conviction_score: 40
+  incremental_mode: false
+  batch_timeout: 1800
+  retry_attempts: 2
+  log_level: "DEBUG"
+  data_sample_size: 0.1
+  
+  silver_layer:
+    apply_deduplication: true
+    null_handling: "EXCLUDE"
+    
+  gold_layer:
+    create_views: true
+    calculate_rolling_metrics: true
+    
+  quality_checks:
+    enabled: true
+    fail_on_warning: false
+
+# Staging Environment
+staging:
+  catalog_name: "fintech_analytics_staging"
+  environment: "staging"
+  lookback_days: 90
+  min_conviction_score: 45
+  incremental_mode: true
+  batch_timeout: 2400
+  retry_attempts: 3
+  log_level: "INFO"
+  data_sample_size: 0.5
+  
+  silver_layer:
+    apply_deduplication: true
+    null_handling: "EXCLUDE"
+    
+  gold_layer:
+    create_views: true
+    calculate_rolling_metrics: true
+    
+  quality_checks:
+    enabled: true
+    fail_on_warning: false
+
+# Production Environment
+production:
+  catalog_name: "fintech_analytics"
+  environment: "prod"
+  lookback_days: 365
+  min_conviction_score: 50
+  incremental_mode: true
+  batch_timeout: 3600
+  retry_attempts: 5
+  log_level: "WARNING"
+  data_sample_size: 1.0
+  
+  silver_layer:
+    apply_deduplication: true
+    null_handling: "EXCLUDE"
+    type_conversions:
+      shares: "BIGINT"
+      price_per_share: "DOUBLE"
+      confidence_score: "INT"
+      filing_date: "DATE"
+    
+  gold_layer:
+    create_views: true
+    use_materialized_views: false
+    calculate_rolling_metrics: true
+    rolling_window_days: 7
+    calculate_sentiment: true
+    
+  quality_checks:
+    enabled: true
+    fail_on_critical: true
+    fail_on_warning: false
+    checks:
+      - primary_key_validation
+      - null_check
+      - duplicate_detection
+      - data_consistency
+      - type_validation
+      - business_rule_validation
+
+# Performance Configuration (All Environments)
+performance:
+  enable_zorder: true
+  zorder_columns:
+    fact_tables: ["company_name", "filing_date"]
+    dimension_tables: ["cik", "insider_id"]
+  compute_statistics: true
+  enable_compression: true
+  compression_codec: "SNAPPY"
+  enable_partitioning: true
+  partition_columns:
+    - "filing_date"
+
+# Orchestration Configuration
+orchestration:
+  bronze_timeout: 1200
+  silver_timeout: 1800
+  gold_timeout: 1200
+  quality_timeout: 600
+  optimization_timeout: 900
+  
+  critical_tasks:
+    - "silver"
+    - "gold"
+  
+  non_critical_tasks:
+    - "quality_checks"
+    - "optimization"
+  
+  parallel_execution: false
+  sequential_execution: true
+
+# Audit & Logging Configuration
+audit:
+  enabled: true
+  log_level: "INFO"
+  
+  tables:
+    pipeline_runs: true
+    task_runs: true
+    quality_checks: true
+    error_log: true
+    watermarks: true
+  
+  retention_days: 90
+  archive_to_s3: false
+
+# Notification Configuration
+notifications:
+  enabled: true
+  on_success: false
+  on_warning: true
+  on_failure: true
+  
+  channels:
+    email: true
+    slack: true
+  
+  recipients:
+    email:
+      - "data-team@company.com"
+    slack:
+      - "#data-alerts"
+

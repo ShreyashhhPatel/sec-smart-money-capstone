@@ -9,7 +9,7 @@ This folder contains the Databricks SQL dashboard assets for the SEC Smart Money
 
 ## Documentation
 
-- Full user guide: `docs/DASHBOARD_DOCUMENTATION.md`
+- Full user guide: `docs/DASHBOARD_DOCUMENTATION.md.`
 
 ## Notes
 
